@@ -1,0 +1,25 @@
+var express     = require('express');
+var router      = express.Router();
+var controller  = require('./user.controller');
+var auth        = require('./../auth/auth.controller');
+var uuidRegex   = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}$'
+
+// POST for creating a user
+router.post('/', controller.create);
+
+// GET for a single user with a given UUID (regex matched)
+router.get('/:id(' + uuidRegex + ')', controller.read);
+
+// PUT for updating a single user
+router.put('/:id(' + uuidRegex + ')', controller.update);
+
+// GET for reading full users docs
+router.get('/', controller.list);
+
+// GET a single users profile information
+router.get('/me', auth.isAuthenticated(),  controller.me);
+
+// // PUT a single users profile information
+// router.put('/me', auth.isAuthenticated(),  controller.updateMe);
+
+module.exports = router;

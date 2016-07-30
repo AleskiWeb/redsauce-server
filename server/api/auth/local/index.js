@@ -12,7 +12,7 @@ router.post('/', function(req, res, next) {
       return res.status(401).json(error); 
     }
 
-    if (!user) return res.status(401).json({message: valMsg.error.mismatch});
+    if (!user) return res.status(401).json({message: valMsg.error.mismatchCred});
 
     var token = auth.signToken(user._id, user.role);
     res.json({token: token});

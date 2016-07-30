@@ -30,7 +30,7 @@ exports.setup = function (User) {
           if (isMatch) {
             return done(null, user);
           } else {
-            return done(null, false, { message: valMsg.error.mismatch });
+            return done(null, false, { message: valMsg.error.mismatchCred });
           }
         }));
       });

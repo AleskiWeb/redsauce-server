@@ -37,7 +37,6 @@ exports.create = function(req, res, next) {
           var errMsg = valMsg.error.duplicate.replace('{PATH}', 'username');
           return res.status(400).send(errMsg).end();
         }
-        
       } else {
 
         // UserSchema save validation error catch
@@ -59,7 +58,6 @@ exports.create = function(req, res, next) {
 exports.read = function(req, res, next) {
   User.findById(req.params.id, excludedReadParams, function(err, user) {
     var errMsg = valMsg.error.notFound.replace('{PATH}', 'user');
-
     if (err) {
       return res.status(400).send(err).end();
     }
@@ -103,7 +101,6 @@ exports.update = function(req, res, next) {
 
     updated.save(function (err) {
       var errMsg = valMsg.success.updated.replace('{PATH}', 'user')
-
       if (err) {
         return res.status(400).send(err).end();
       }
@@ -120,15 +117,17 @@ exports.update = function(req, res, next) {
  * Delete a user from the collection
  */
 exports.delete = function(req, res) {
+  var succMsg = valMsg.success.deleted.replace('{PATH}', 'User');
+  var errMsg =  valMsg.error.notFound.replace('{PATH}', 'user')
   User.findById(req.params.id, function (err, user) {
     if (err) return res.status(400).end();
-    if (!user) { 
-      return res.status(404).send('Not Found'); 
+    if (!user) {
+      return res.status(404).send(errMsg); 
     }
 
     user.remove(function(err) {
       if (err) return res.status(400).end();
-      return res.status(204).send('No Content');
+      return res.status(200).send(succMsg);
     });
   });
 };
@@ -164,6 +163,7 @@ exports.list = function(req, res, next) {
  * end user
  */
 exports.me = function(req, res, next) {
+  var errMsg = valMsg.error.noAuth;
   User.findOne({
     _id: req.user._id
   }, excludedReadParams, function(err, user) {
@@ -171,7 +171,7 @@ exports.me = function(req, res, next) {
       return next(err)
     }
 
-    if (!user) return res.status(401).send('Unauthorized');
+    if (!user) return res.status(403).send(errMsg);
     res.json(user);
   });
 };

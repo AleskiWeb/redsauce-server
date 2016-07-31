@@ -88,6 +88,11 @@ exports.update = function(req, res, next) {
       return res.status(400).send(err).end();
     }
 
+    if (_.isEmpty(req.body)) {
+      var errMsg = valMsg.error.emptyBody;
+      return res.status(200).send(errMsg);
+    }
+
     if (!user) {
       var errMsg = valMsg.error.notFound.replace('{PATH}', 'user')
       return res.status(404).send(errMsg); 
@@ -173,5 +178,31 @@ exports.me = function(req, res, next) {
 
     if (!user) return res.status(403).send(errMsg);
     res.json(user);
+  });
+};
+
+/**
+ * -----------------
+ * UPDATEME
+ * -----------------
+ * Displays user profile information fora given specific
+ * end user
+ */
+exports.updateMe = function(req, res, next) {
+  var updateOptions = {
+    name: req.body.name,
+    email: req.body.email
+  };
+
+  if (req.body.password) {
+    updateOptions.password = req.body.password;
+  }
+
+  User.findByIdAndUpdate(req.user._id, updateOptions).then(function(data, err) {
+    if (err) {
+      return res.status(500).end();
+    }
+
+    res.status(200).end();
   });
 };

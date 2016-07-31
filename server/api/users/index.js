@@ -19,8 +19,11 @@ router.delete('/:id(' + uuidRegex + ')', controller.delete);
 // GET for reading full users docs
 router.get('/', controller.list);
 
-// GET a single users profile information
+// GET a single end users profile information
 router.get('/me', auth.isAuthenticated(),  controller.me);
+
+// PUT a single end users profile infomation
+router.put('/me', auth.isAuthenticated(),  controller.updateMe);
 
 // // PUT a single users profile information
 // router.put('/me', auth.isAuthenticated(),  controller.updateMe);

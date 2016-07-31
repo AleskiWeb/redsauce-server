@@ -43,13 +43,13 @@ function isAuthenticated() {
  * Checks if the user role meets the minimum requirements of the route
  */
 function hasRole(roleRequired) {
-  var errMsg = valMsg.error.noPerm;
+  var errMsg = valMsg.error.noPerm.replace('{PATH}', roleRequired);
   if (!roleRequired) throw new Error(errMsg);
 
   return compose()
     .use(isAuthenticated())
     .use(function meetsRequirements(req, res, next) {
-      if (config.userRoles.indexOf(req.user.role) >= config.userRoles.indexOf(roleRequired)) {
+      if (config.rolesAvailable.indexOf(req.user.role) >= config.rolesAvailable.indexOf(roleRequired)) {
         next();
       } else {
         res.status(403).send(errMsg);

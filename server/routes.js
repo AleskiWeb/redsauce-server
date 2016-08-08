@@ -1,5 +1,6 @@
 var users     = require('./api/users');
-var auth      = require('./api/auth')
+var auth      = require('./api/auth');
+var blog      = require('./api/blog');
 
 module.exports = function (app) {
 
@@ -11,6 +12,7 @@ module.exports = function (app) {
     next();
   })
 
+  app.use('/api/auth',  auth);
   app.use('/api/users', users);
-  app.use('/api/auth', auth)
+  app.use('/api/blog',  blog);
 }

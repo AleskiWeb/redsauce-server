@@ -1,8 +1,12 @@
 var express     = require('express');
 var router      = express.Router();
-var controller  = require('./user.controller');
+var controller  = require('./blog.post.controller');
 var auth        = require('./../auth/auth.controller');
-var uuidRegex   = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}$'
+var blogCategories = require('./category');
+
+var uuidRegex   = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}$';
+
+router.use('/categories', blogCategories);
 
 // POST for creating a user
 router.post('/', controller.create);
@@ -18,11 +22,5 @@ router.delete('/:id(' + uuidRegex + ')', controller.delete);
 
 // GET for reading full users docs
 router.get('/', controller.list);
-
-// GET a single end users profile information
-router.get('/me', auth.isAuthenticated(),  controller.me);
-
-// PUT a single end users profile infomation
-router.put('/me', auth.isAuthenticated(),  controller.updateMe);
 
 module.exports = router;

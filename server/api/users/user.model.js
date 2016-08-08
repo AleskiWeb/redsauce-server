@@ -18,7 +18,7 @@ var UserSchema   = new Schema({
   _id               : { type: String, default: function () { return uuid.v4(); }, unique: true },
   username          : { type: String, required: true },
   usernameLowerCase : { type: String, index: { unique: true } },
-  email             : { type: String, trim: true, lowercase: true, unique: true },
+  email             : { type: String, default: '', trim: true, lowercase: true, unique: true },
   password          : { type: String },
   role              : { type: String, default: 'user' },
   created           : { type: Date, default: Date.now },

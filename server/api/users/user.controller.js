@@ -15,7 +15,7 @@ exports.create = function(req, res, next) {
   var newUser = new User(req.body);
 
   newUser.save(function(err) {
-    var errMsg = valMsg.success.created.replace('{PATH}', 'user');
+    var succMsg = valMsg.success.created.replace('{PATH}', 'user');
     if (err) {
 
       /**
@@ -27,13 +27,13 @@ exports.create = function(req, res, next) {
       if (err.code === 11000) {
 
         // Duplication on email field error
-        if (err.errmsg.indexOf('$email') > -1) {
+        if (err.errmsg.indexOf('email') > -1) {
           var errMsg = valMsg.error.duplicate.replace('{PATH}', 'email');
           return res.status(400).send(errMsg).end();
         }
 
         // Duplication on username(LowerCase) field error
-        if (err.errmsg.indexOf('$usernameLowerCase') > -1) {
+        if (err.errmsg.indexOf('usernameLowerCase') > -1) {
           var errMsg = valMsg.error.duplicate.replace('{PATH}', 'username');
           return res.status(400).send(errMsg).end();
         }
@@ -45,7 +45,7 @@ exports.create = function(req, res, next) {
     }
 
     // 201 for Creation
-    res.status(201).send(errMsg).end();
+    res.status(201).send(succMsg).end();
   });
 };
 
@@ -105,12 +105,12 @@ exports.update = function(req, res, next) {
     var updated = _.merge(user, req.body);
 
     updated.save(function (err) {
-      var errMsg = valMsg.success.updated.replace('{PATH}', 'user')
+      var succMsg = valMsg.success.updated.replace('{PATH}', 'user')
       if (err) {
         return res.status(400).send(err).end();
       }
 
-      return res.status(200).send(errMsg);
+      return res.status(200).send(succMsg);
     });
   });
 };

@@ -1,6 +1,7 @@
-var _         = require('lodash');
-var BlogPost  = require('./blog.post.model');
-var valMsg    = require('./../validation.messages');
+var _             = require('lodash');
+var BlogPost      = require('./blog.post.model');
+var BlogCategory  = require('./categories/blog.category.model');
+var valMsg        = require('./../validation.messages');
 
 /**
  * -----------------
@@ -140,3 +141,13 @@ exports.list = function(req, res, next) {
       });
   });
 };
+
+/**
+ * -----------------
+ * LIST CATEGORIES WITH POSTS
+ * -----------------
+ * Display a list of blog categories and couple their posts inside
+ */
+exports.listWithPosts = function(req, res, next) {
+  return res.send('hi');
+}

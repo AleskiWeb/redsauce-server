@@ -1,8 +1,8 @@
-var express     = require('express');
-var router      = express.Router();
-var controller  = require('./blog.post.controller');
-var auth        = require('./../auth/auth.controller');
-var blogCategories = require('./category');
+var express         = require('express');
+var router          = express.Router();
+var controller      = require('./blog.post.controller');
+var auth            = require('./../auth/auth.controller');
+var blogCategories  = require('./categories');
 
 var uuidRegex   = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}$';
 
@@ -20,7 +20,10 @@ router.put('/:id(' + uuidRegex + ')', controller.update);
 // DELETE for removing a single user with a given UUID (regex matched)
 router.delete('/:id(' + uuidRegex + ')', controller.delete);
 
-// GET for reading full users docs
+// GET for reading full blog docs
 router.get('/', controller.list);
+
+// GET for reading full blog with categories
+router.get('/list', controller.listWithPosts);
 
 module.exports = router;

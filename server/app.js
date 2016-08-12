@@ -1,8 +1,9 @@
-var express    = require('express');
-var app        = express();
-var bodyParser = require('body-parser');
-var mongoose   = require('mongoose');
-var dbConfig   = require('./config/db')
+var express     = require('express');
+var app         = express();
+var bodyParser  = require('body-parser');
+var mongoose    = require('mongoose');
+var bluebird    = require('bluebird');
+var dbConfig    = require('./config/db');
 
 // Set our port
 var port = process.env.PORT || 8080;
@@ -15,7 +16,9 @@ var routes = require('./routes');
 
 /**
  * MONGO Connect
+ * mongoose promise library override with bluebird
  */
+mongoose.Promise = bluebird;
 mongoose.connect(mongoUri, function(err) {
   if (err) {
     throw err;
@@ -30,7 +33,7 @@ app.use(bodyParser.json());
 
 // Argv check to see if dbSeed has been passed through
 if (process.argv.indexOf('dbSeed') > -1) {
-  // Seed DB code in here
+  require('./seed');
 }
 
 /**

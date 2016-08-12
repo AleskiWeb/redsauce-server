@@ -17,12 +17,7 @@ exports.create = function(req, res, next) {
   newCategory.save(function(err) {
     var succMsg = valMsg.success.created.replace('{PATH}', 'blog category');
     if (err) {
-      /**
-       * TODO: Handle MongoDB Errors (Like Dup Key)
-       * Consider changing this to the preferred implementation of emulating Mongoose errors
-       * 
-       * Currently just checks for the error code for dup key from MongoDB response
-       */
+      
       if (err.code === 11000) {
 
         // Duplication on name(LowerCase) field error

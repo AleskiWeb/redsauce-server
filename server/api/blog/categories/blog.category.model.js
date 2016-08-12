@@ -1,7 +1,7 @@
-var mongoose     = require('mongoose');
-var uuid         = require('node-uuid');
-var valMsg       = require('./../../validation.messages');
-var Schema       = mongoose.Schema;
+var mongoose  = require('bluebird').promisifyAll(require('mongoose'));
+var uuid      = require('node-uuid');
+var valMsg    = require('./../../validation.messages');
+var Schema    = mongoose.Schema;
 
 var BlogCategorySchema = new Schema({
   _id               : { type: String, default: function () { return uuid.v4(); }, unique: true },

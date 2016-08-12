@@ -1,4 +1,5 @@
 var _             = require('lodash');
+var Promise       = require('bluebird');
 var BlogPost      = require('./blog.post.model');
 var BlogCategory  = require('./categories/blog.category.model');
 var valMsg        = require('./../validation.messages');
@@ -149,5 +150,21 @@ exports.list = function(req, res, next) {
  * Display a list of blog categories and couple their posts inside
  */
 exports.listWithPosts = function(req, res, next) {
-  return res.send('hi');
+
+  BlogCategory.find({}, function(err, blogCategories) {
+    var categories = blogCategories.map(function(blogCategory) {
+      return BlogPost.find()
+        .where({ category: blogCategory._id })
+        .execAsync()
+        .then(function(blogPosts) {
+          blogCategory.posts = blogPosts;
+          return blogPosts;
+        })
+    });
+
+    Promise.all(categories)
+      .then(function(blog) {
+        res.json(blog); 
+      })
+  })
 }

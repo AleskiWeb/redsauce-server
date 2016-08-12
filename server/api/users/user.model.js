@@ -1,8 +1,8 @@
-var bcrypt       = require('bcrypt');
-var mongoose     = require('mongoose');
-var uuid         = require('node-uuid');
-var valMsg       = require('./../validation.messages');
-var Schema       = mongoose.Schema;
+var bcrypt    = require('bcrypt');
+var mongoose  = require('bluebird').promisifyAll(require('mongoose'));
+var uuid      = require('node-uuid');
+var valMsg    = require('./../validation.messages');
+var Schema    = mongoose.Schema;
 
 // Password regex for 1 uppercase, 1 lowercase, 1 non-lphanumerical and 1 number of atleast 8 long
 var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/i;

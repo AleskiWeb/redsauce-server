@@ -2,6 +2,7 @@ var _             = require('lodash');
 var Promise       = require('bluebird');
 var BlogPost      = require('./blog.post.model');
 var BlogCategory  = require('./categories/blog.category.model');
+var User          = require('./../users/user.model');
 var valMsg        = require('./../validation.messages');
 
 /**
@@ -147,24 +148,32 @@ exports.list = function(req, res, next) {
  * -----------------
  * LIST CATEGORIES WITH POSTS
  * -----------------
- * Display a list of blog categories and couple their posts inside
+ * Displays a list of categories
+ * with blog posts belonging to each category attached
+ * with user details attached for each blog post
  */
 exports.listWithPosts = function(req, res, next) {
-
   BlogCategory.find({}, function(err, blogCategories) {
-    var categories = blogCategories.map(function(blogCategory) {
+    Promise.map(blogCategories, function(blogCategory) {
       return BlogPost.find()
         .where({ category: blogCategory._id })
+        .select({ name: 1, updated: 1, user: 1 })
+        .populate({
+          path: 'user',
+          select: 'username',
+          model: 'User'
+        })
         .execAsync()
         .then(function(blogPosts) {
-          blogCategory.posts = blogPosts;
-          return blogPosts;
-        })
-    });
+          var categoryDetails = {};
+          
+          categoryDetails.name = blogCategory.name;
+          categoryDetails.posts = blogPosts;
 
-    Promise.all(categories)
-      .then(function(blog) {
-        res.json(blog); 
-      })
+          return categoryDetails;
+        })
+    }).then(function(blog) {
+      res.json(blog);
+    })
   })
 }

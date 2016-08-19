@@ -9,7 +9,7 @@ var valMsg        = require('./../validation.messages');
  * -----------------
  * CREATE
  * -----------------
- * Creates a new user
+ * Creates a new user document
  */
 exports.create = function(req, res, next) {
   var newBlogPost = new BlogPost(req.body);

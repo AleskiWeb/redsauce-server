@@ -1,5 +1,6 @@
 var _             = require('lodash');
 var BlogCategory  = require('./blog.category.model');
+var BlogPost      = require('./../blog.post.model')
 var valMsg        = require('./../../validation.messages');
 
 // Properties of documents we never want to return
@@ -44,18 +45,35 @@ exports.create = function(req, res, next) {
  * Fetches a single blog category and returns its document
  */
 exports.read = function(req, res, next) {
-  BlogCategory.findById(req.params.id, excludedReadParams, function(err, blogCat) {
-    var errMsg = valMsg.error.notFound.replace('{PATH}', 'blog category');
-    if (err) {
+  BlogCategory.findByIdAsync(req.params.id, excludedReadParams)
+    .then(function(blogCategory) {
+      var errMsg = valMsg.error.notFound.replace('{PATH}', 'blog category');
+
+      if (!blogCategory) {
+        return res.status(404).send(errMsg).end();
+      }
+
+      BlogPost.find()
+        .where({ category: blogCategory._id })
+        .select({ name: 1, user: 1, content: 1 })
+        .populate({
+          path: 'user',
+          select: 'username',
+          model: 'User'
+        })
+        .execAsync()
+        .then(function(blogPosts) {
+          var categoryDetails = {};
+
+          categoryDetails.name = blogCategory.name;
+          categoryDetails.posts = blogPosts;
+
+          res.status(200).json(categoryDetails);
+        })
+    })
+    .catch(function(err) {
       return res.status(400).send(err).end();
-    }
-
-    if (!blogCat) {
-      return res.status(404).send(errMsg).end();
-    }
-
-    res.status(200).json(blogCat);
-  });
+    })
 };
 
 /**

@@ -157,7 +157,7 @@ exports.listWithPosts = function(req, res, next) {
     Promise.map(blogCategories, function(blogCategory) {
       return BlogPost.find()
         .where({ category: blogCategory._id })
-        .select({ name: 1, updated: 1, user: 1 })
+        .select({ name: 1, updated: 1, user: 1, content: 1 })
         .populate({
           path: 'user',
           select: 'username',
@@ -172,7 +172,8 @@ exports.listWithPosts = function(req, res, next) {
 
           return categoryDetails;
         })
-    }).then(function(blog) {
+    })
+    .then(function(blog) {
       res.json(blog);
     })
   })

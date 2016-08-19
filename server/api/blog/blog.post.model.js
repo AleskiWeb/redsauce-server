@@ -9,7 +9,8 @@ var BlogPostSchema = new Schema({
   user              : { type: String, ref: 'User', required: true },
   name              : { type: String, required: true },
   created           : { type: Date, default: Date.now },
-  updated           : { type: Date, default: Date.now }
+  updated           : { type: Date, default: Date.now },
+  content           : { type: String }
 });
 
 module.exports = mongoose.model('BlogPost', BlogPostSchema);

@@ -31,7 +31,7 @@ exports.create = function(req, res, next) {
  * -----------------
  * READ
  * -----------------
- * Fetches a single blog post and returns its model
+ * Fetches a single blog document post and returns its model
  */
 exports.read = function(req, res, next) {
   BlogPost.findById(req.params.id)

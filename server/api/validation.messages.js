@@ -9,6 +9,9 @@ var validationMessages = {
     noAuth: 'Authentication failure',
     noPerm: 'Authentication failure: Account lacks the required permissions ({PATH})'
   },
+  warn: {
+    createdNoAchi: 'WARNING: No achievements were saved when creating this user'
+  },
   success: {
     created: 'Creation of {PATH} was successful',
     updated: 'Successfully updated {PATH}',

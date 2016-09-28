@@ -1,10 +1,11 @@
-var bcrypt    = require('bcrypt');
-var mongoose  = require('bluebird').promisifyAll(require('mongoose'));
-var uuid      = require('node-uuid');
-var valMsg    = require('./../validation.messages');
-var Schema    = mongoose.Schema;
+var bcrypt      = require('bcrypt');
+var mongoose    = require('bluebird').promisifyAll(require('mongoose'));
+var uuid        = require('node-uuid');
+var valMsg      = require('./../validation.messages');
+var Achievement = require('./../achievements/achievement.model');
+var Schema      = mongoose.Schema;
 
-// Password regex for 1 uppercase, 1 lowercase, 1 non-lphanumerical and 1 number of atleast 8 long
+// Password regex for 1 uppercase, 1 lowercase, 1 non-alphanumerical and 1 number of atleast 8 long
 var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/i;
 
 /**
@@ -16,8 +17,14 @@ var SALT_WORK_FACTOR = 10;
 
 var UserSchema   = new Schema({
   _id               : { type: String, default: function () { return uuid.v4(); }, unique: true },
+  store_id          : { type: String, required: true },
   username          : { type: String, required: true },
   usernameLowerCase : { type: String, index: { unique: true } },
+  personalDetails   : {
+    firstName    : { type: String },
+    lastName     : { type: String }
+  },
+  achievements      : { type: Array },
   email             : { type: String, default: '', trim: true, lowercase: true, unique: true },
   password          : { type: String },
   role              : { type: String, default: 'user' },

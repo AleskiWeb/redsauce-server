@@ -1,6 +1,7 @@
-var _       = require('lodash');
-var User    = require('./user.model');
-var valMsg  = require('./../validation.messages');
+var _           = require('lodash');
+var User        = require('./user.model');
+var Achievement = require('./../achievements/achievement.model')
+var valMsg      = require('./../validation.messages');
 
 // Properties of documents we never want to return
 var excludedReadParams = '-password -__v -usernameLowerCase';
@@ -14,39 +15,70 @@ var excludedReadParams = '-password -__v -usernameLowerCase';
 exports.create = function(req, res, next) {
   var newUser = new User(req.body);
 
-  newUser.save(function(err) {
-    var succMsg = valMsg.success.created.replace('{PATH}', 'user');
-    if (err) {
+  newUser.personalDetails = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName
+  };
 
-      /**
-       * TODO: Handle MongoDB Errors (Like Dup Key)
-       * Consider changing this to the preferred implementation of emulating Mongoose errors
-       * 
-       * Currently just checks for the error code for dup key from MongoDB response
-       */
-      if (err.code === 11000) {
+  // Populate the achievement array with relevant achievements (same store_id)
+  Achievement.find()
+    .where({ store_id: newUser.store_id })
+    .select({ _id: 1 })
+    .exec()
+    .then(function(achievementsForStoreArray) {
 
-        // Duplication on email field error
-        if (err.errmsg.indexOf('email') > -1) {
-          var errMsg = valMsg.error.duplicate.replace('{PATH}', 'email');
-          return res.status(400).send(errMsg).end();
+      // For each of the achievements add a false flag and push them into the newUser.achievements array
+      _.forEach(achievementsForStoreArray, function(achievementForStore) {
+        var achievementObject = {};
+
+        // Default to not having any of the achievements earned
+        achievementObject._id = achievementForStore._id;
+        achievementObject.earned = false;
+
+        newUser.achievements.push(achievementObject);
+      });
+
+      newUser.save(function(err, user) {
+        var succMsg = valMsg.success.created.replace('{PATH}', 'user');
+        var partialSuccMsg = valMsg.warn.createdNoAchi.replace('{PATH}', 'user');
+
+        if (err) {
+
+          // IF the error code is 11000 that means its a MongoDB driver exception
+          if (err.code === 11000) {
+
+            // Duplication on email field error
+            if (err.errmsg.indexOf('email') > -1) {
+              var errMsg = valMsg.error.duplicate.replace('{PATH}', 'email');
+              return res.status(400).send(errMsg).end();
+            }
+
+            // Duplication on username(LowerCase) field error
+            if (err.errmsg.indexOf('usernameLowerCase') > -1) {
+              var errMsg = valMsg.error.duplicate.replace('{PATH}', 'username');
+              return res.status(400).send(errMsg).end();
+            }
+          } else {
+
+            // UserSchema save validation error catch
+            return res.status(400).send(err).end();
+          }
         }
 
-        // Duplication on username(LowerCase) field error
-        if (err.errmsg.indexOf('usernameLowerCase') > -1) {
-          var errMsg = valMsg.error.duplicate.replace('{PATH}', 'username');
-          return res.status(400).send(errMsg).end();
+        if(user.achievements.length === 0) {
+
+          // 201 for Creation - WARN no achievements
+          res.status(201).send(partialSuccMsg).end();
+        } else {
+
+          // 201 for Creation
+          res.status(201).send(succMsg).end();
         }
-      } else {
-
-        // UserSchema save validation error catch
-        return res.status(400).send(err).end();
-      }
-    }
-
-    // 201 for Creation
-    res.status(201).send(succMsg).end();
-  });
+      });
+    })
+    .catch(function(err) {
+      return res.status(400).send(err).end();
+    })
 };
 
 /**

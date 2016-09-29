@@ -32,7 +32,7 @@ exports.create = function(req, res, next) {
         var achievementObject = {};
 
         // Default to not having any of the achievements earned
-        achievementObject._id = achievementForStore._id;
+        achievementObject.achievementDetails = achievementForStore._id;
         achievementObject.earned = false;
 
         newUser.achievements.push(achievementObject);
@@ -183,11 +183,11 @@ exports.list = function(req, res, next) {
       .limit(req.query.pagesize)
       .skip((req.query.page * req.query.pagesize))
       .select(excludedReadParams)
-      .populate({
-          path: 'achievements',
+      .populate([{
+          path: 'achievements.achievementDetails',
           select: 'name',
           model: 'Achievement'
-        })
+        }])
       .exec(function(err, docs) {
         res.status(200).json({
           docs: docs,

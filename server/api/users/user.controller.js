@@ -183,6 +183,11 @@ exports.list = function(req, res, next) {
       .limit(req.query.pagesize)
       .skip((req.query.page * req.query.pagesize))
       .select(excludedReadParams)
+      .populate({
+          path: 'achievements',
+          select: 'name',
+          model: 'Achievement'
+        })
       .exec(function(err, docs) {
         res.status(200).json({
           docs: docs,

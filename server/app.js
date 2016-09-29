@@ -1,9 +1,10 @@
 var express     = require('express');
-var app         = express();
 var bodyParser  = require('body-parser');
 var mongoose    = require('mongoose');
 var bluebird    = require('bluebird');
+var colors      = require('colors');
 var dbConfig    = require('./config/db');
+var app         = express();
 
 // Set our port
 var port = process.env.PORT || 8080;
@@ -30,11 +31,6 @@ mongoose.connect(mongoUri, function(err) {
 // Configure app to use bodyParser() to get post data
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// Argv check to see if dbSeed has been passed through
-if (process.argv.indexOf('dbSeed') > -1) {
-  require('./seed');
-}
 
 /**
  * Establish Routes for the App

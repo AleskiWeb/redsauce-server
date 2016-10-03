@@ -7,7 +7,7 @@ var dbConfig    = require('./config/db');
 var app         = express();
 
 // Set our port
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8081;
 
 // MongoDB connection URI
 var mongoUri = dbConfig.uri;

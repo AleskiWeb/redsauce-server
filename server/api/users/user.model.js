@@ -26,7 +26,7 @@ var UserSchema   = new Schema({
   },
   achievements      : { type: Array },
   email             : { type: String, default: '', trim: true, lowercase: true, unique: true },
-  password          : { type: String },
+  password          : { type: String, required: true },
   role              : { type: String, default: 'user' },
   created           : { type: Date, default: Date.now },
   updated           : { type: Date, default: Date.now }

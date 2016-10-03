@@ -41,6 +41,7 @@ exports.create = function(req, res, next) {
       newUser.save(function(err, user) {
         var succMsg = valMsg.success.created.replace('{PATH}', 'user');
         var partialSuccMsg = valMsg.warn.createdNoAchi.replace('{PATH}', 'user');
+        var errMsg = valMsg.error.empty.replace('{PATH}', 'password');
 
         if (err) {
 

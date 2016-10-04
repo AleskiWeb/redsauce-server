@@ -9,10 +9,11 @@ router.post('/', function(req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     var error = err || info;
     if (error) {
-      return res.status(401).json(error); 
+      console.log(error);
+      return res.status(401).send(valMsg.error.mismatchCred); 
     }
 
-    if (!user) return res.status(401).json({message: valMsg.error.mismatchCred});
+    if (!user) return res.status(401).send(valMsg.error.mismatchCred);
 
     var token = auth.signToken(user._id, user.role);
     res.json({token: token});

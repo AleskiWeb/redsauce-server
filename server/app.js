@@ -31,6 +31,12 @@ mongoose.connect(mongoUri, function(err) {
 // Configure app to use bodyParser() to get post data
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'authorization, content-type');
+  next();
+});
 
 /**
  * Establish Routes for the App

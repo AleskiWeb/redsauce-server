@@ -10,10 +10,10 @@ router.post('/', function(req, res, next) {
     var error = err || info;
     if (error) {
       console.log(error);
-      return res.status(401).send(valMsg.error.mismatchCred); 
+      return res.status(401).send({ message: valMsg.error.mismatchCred }); 
     }
 
-    if (!user) return res.status(401).send(valMsg.error.mismatchCred);
+    if (!user) return res.status(401).send({ message: valMsg.error.mismatchCred });
 
     var token = auth.signToken(user._id, user.role);
     res.json({token: token});

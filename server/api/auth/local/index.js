@@ -15,7 +15,7 @@ router.post('/', function(req, res, next) {
 
     if (!user) return res.status(401).send({ message: valMsg.error.mismatchCred });
 
-    var token = auth.signToken(user._id, user.role);
+    var token = auth.signToken(user._id, user.role, user.personalDetails);
     res.json({token: token});
   })(req, res, next);
 });

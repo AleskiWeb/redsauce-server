@@ -1,6 +1,6 @@
 var _             = require('lodash');
-var BlogCategory  = require('./blog.category.model');
-var BlogPost      = require('./../blog.post.model')
+var BlogCategory  = require('./category.model');
+var BlogPost      = require('./../blog.model')
 var valMsg        = require('./../../validation.messages');
 
 // Properties of documents we never want to return

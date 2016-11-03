@@ -1,7 +1,7 @@
 var _             = require('lodash');
 var Promise       = require('bluebird');
-var BlogPost      = require('./blog.post.model');
-var BlogCategory  = require('./categories/blog.category.model');
+var Career      = require('./career.model');
+var CareerCategory  = require('./categories/category.model');
 var User          = require('./../users/user.model');
 var valMsg        = require('./../validation.messages');
 
@@ -12,13 +12,13 @@ var valMsg        = require('./../validation.messages');
  * Creates a new user document
  */
 exports.create = function(req, res, next) {
-  var newBlogPost = new BlogPost(req.body);
+  var newCareer = new Career(req.body);
 
-  newBlogPost.save(function(err) {
-    var succMsg = valMsg.success.created.replace('{PATH}', 'blog post');
+  newCareer.save(function(err) {
+    var succMsg = valMsg.success.created.replace('{PATH}', 'career');
     if (err) {
 
-      // BlogPostSchema save validation error catch
+      // CareerSchema save validation error catch
       return res.status(400).send(err).end();
     }
 
@@ -31,31 +31,26 @@ exports.create = function(req, res, next) {
  * -----------------
  * READ
  * -----------------
- * Fetches a single blog document post and returns its model
+ * Fetches a single career document post and returns its model
  */
 exports.read = function(req, res, next) {
-  BlogPost.findById(req.params.id)
-  .populate({
-    path: 'user',
-    select: 'username',
-    model: 'User'
-  })
+  Career.findById(req.params.id)
   .populate({
     path: 'category',
     select: 'name',
-    model: 'BlogCategory'
+    model: 'CareerCategory'
   })
-  .exec(function(err, blogPost) {
-    var errMsg = valMsg.error.notFound.replace('{PATH}', 'blog post');
+  .exec(function(err, career) {
+    var errMsg = valMsg.error.notFound.replace('{PATH}', 'career post');
     if (err) {
       return res.status(400).send(err).end();
     }
 
-    if (!blogPost) {
+    if (!career) {
       return res.status(404).send(errMsg).end();
     }
 
-    res.status(200).json(blogPost);
+    res.status(200).json(career);
   });
 };
 
@@ -63,7 +58,7 @@ exports.read = function(req, res, next) {
  * -----------------
  * UPDATE
  * -----------------
- * Updates a given blog post, using the ID
+ * Updates a given career post, using the ID
  */
 exports.update = function(req, res, next) {
 
@@ -72,7 +67,7 @@ exports.update = function(req, res, next) {
     delete req.body._id; 
   }
 
-  BlogPost.findById(req.params.id, function (err, blogPost) {
+  Career.findById(req.params.id, function (err, career) {
     if (err) {
       return res.status(400).send(err).end();
     }
@@ -82,15 +77,15 @@ exports.update = function(req, res, next) {
       return res.status(200).send(errMsg);
     }
 
-    if (!blogPost) {
-      var errMsg = valMsg.error.notFound.replace('{PATH}', 'blog post')
+    if (!career) {
+      var errMsg = valMsg.error.notFound.replace('{PATH}', 'career')
       return res.status(404).send(errMsg); 
     }
 
-    var updated = _.merge(blogPost, req.body);
+    var updated = _.merge(career, req.body);
 
     updated.save(function (err) {
-      var succMsg = valMsg.success.updated.replace('{PATH}', 'blog post')
+      var succMsg = valMsg.success.updated.replace('{PATH}', 'career')
       if (err) {
         return res.status(400).send(err).end();
       }
@@ -104,18 +99,18 @@ exports.update = function(req, res, next) {
  * -----------------
  * DELETE
  * -----------------
- * Delete a blog post from the collection
+ * Delete a career post from the collection
  */
 exports.delete = function(req, res) {
-  var succMsg = valMsg.success.deleted.replace('{PATH}', 'Blog post');
-  var errMsg =  valMsg.error.notFound.replace('{PATH}', 'blog post')
-  BlogPost.findById(req.params.id, function (err, blogPost) {
+  var succMsg = valMsg.success.deleted.replace('{PATH}', 'Career');
+  var errMsg =  valMsg.error.notFound.replace('{PATH}', 'career')
+  Career.findById(req.params.id, function (err, career) {
     if (err) return res.status(400).end();
-    if (!blogPost) {
+    if (!career) {
       return res.status(404).send(errMsg); 
     }
 
-    blogPost.remove(function(err) {
+    career.remove(function(err) {
       if (err) return res.status(400).end();
       return res.status(200).send(succMsg);
     });
@@ -126,13 +121,13 @@ exports.delete = function(req, res) {
  * -----------------
  * LIST
  * -----------------
- * Displays a formatted list of all the blog posts inside the DB
+ * Displays a formatted list of all the career posts inside the DB
  * It also uses pagingation
  * Excludes sensitive properties
  */
 exports.list = function(req, res, next) {
-  BlogPost.count({}, function(err, count) {
-    BlogPost.find({})
+  Career.count({}, function(err, count) {
+    Career.find({})
       .limit(req.query.pagesize)
       .skip((req.query.page * req.query.pagesize))
       .exec(function(err, docs) {
@@ -149,32 +144,28 @@ exports.list = function(req, res, next) {
  * LIST CATEGORIES WITH POSTS
  * -----------------
  * Displays a list of categories
- * with blog posts belonging to each category attached
- * with user details attached for each blog post
+ * with career posts belonging to each category attached
+ * with user details attached for each career post
  */
-exports.listWithPosts = function(req, res, next) {
-  BlogCategory.find({}, function(err, blogCategories) {
-    Promise.map(blogCategories, function(blogCategory) {
-      return BlogPost.find()
-        .where({ category: blogCategory._id })
-        .select({ name: 1, updated: 1, user: 1, content: 1 })
-        .populate({
-          path: 'user',
-          select: 'username',
-          model: 'User'
-        })
+exports.listWithCareers = function(req, res, next) {
+  CareerCategory.find({}, function(err, careerCategories) {
+    Promise.map(careerCategories, function(careerCategory) {
+      return Career.find()
+        .where({ category: careerCategory._id })
+        .select({ name: 1, content: 1 })
         .execAsync()
-        .then(function(blogPosts) {
+        .then(function(careers) {
           var categoryDetails = {};
           
-          categoryDetails.name = blogCategory.name;
-          categoryDetails.posts = blogPosts;
+          categoryDetails.name = careerCategory.name;
+          categoryDetails.description = careerCategory.description;
+          categoryDetails.careers = careers;
 
           return categoryDetails;
         })
     })
-    .then(function(blog) {
-      res.json(blog);
+    .then(function(career) {
+      res.json(career);
     })
   })
 }

@@ -2,6 +2,7 @@ var users        = require('./api/users');
 var auth         = require('./api/auth');
 var blog         = require('./api/blog');
 var achievements = require('./api/achievements');
+var careers      = require('./api/careers');
 
 module.exports = function (app) {
 
@@ -17,4 +18,5 @@ module.exports = function (app) {
   app.use('/api/users', users);
   app.use('/api/blog',  blog);
   app.use('/api/achievements', achievements)
+  app.use('/api/careers',  careers);  
 }

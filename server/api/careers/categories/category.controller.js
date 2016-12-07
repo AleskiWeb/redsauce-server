@@ -34,7 +34,7 @@ exports.create = function(req, res, next) {
     }
 
     // 201 for Creation
-    res.status(201).send(succMsg).end();
+    res.status(201).json({response: succMsg}).end();
   });
 };
 
